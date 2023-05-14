@@ -375,7 +375,7 @@ def scale(matrix):
 def de_mean_matrix(A):
     r, c = shape(A)
     columns_means = [mean(get_column(A,i)) for i in range(c)]
-    return make_matrix(r, c, lambda i, j: A[i][j] - column_means[j])
+    return make_matrix(r, c, lambda i, j: A[i][j] - columns_means[j])
 def direction(w):
     return [w_i/magnitude(w) for w_i in w]
 def dir_variance(X,w):
