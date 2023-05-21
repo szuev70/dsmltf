@@ -624,7 +624,7 @@ def ch_weights(w, b, data, mu=0.05): # data есть список списков
 def art_nn(entry,layers): # инициирует веса и смещения для указанного числа входов и списка из количеств нейронов в слоях
     WW, W, B, b = [], [], [], []
     for li in range(layers[0]):
-        W.append([random()-1/2 for _ in range(entry)])
+        W.append([random.random()-1/2 for _ in range(entry)])
         b.append(0)
     WW.append(W)
     B.append(b)
@@ -634,7 +634,7 @@ def art_nn(entry,layers): # инициирует веса и смещения д
         for s,ls in enumerate(layers[1:]):
             W, b = [], []
             for lj in range(ls):
-                W.append([random()-1/2 for _ in range(layers[s])])
+                W.append([random.random()-1/2 for _ in range(layers[s])])
                 b.append(0)
             WW.append(W)
             B.append(b)
