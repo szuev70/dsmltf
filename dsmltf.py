@@ -219,6 +219,30 @@ def vector_add(v, w):
     return [v_i + w_i for v_i, w_i in zip(v, w)]
 
 
+def reduce(reducer, iterable, initial=None):
+    """
+    Свёртка
+
+    Parameters
+    ----------
+        reducer (function): Функция
+        iterable (iterable): Итерируемый объект
+        initial (any): Начальное значение
+
+    Returns
+    -------
+        any: Результат свёртки
+    """
+    it = iter(iterable)
+    if initial is None:
+        value = next(it)
+    else:
+        value = initial
+    for element in it:
+        value = reducer(value, element)
+    return value
+
+
 def vector_sum(vectors):
     """
     Сумма векторов из списка векторов
@@ -263,6 +287,21 @@ def dot(v, w):
     -------
         float: Скалярное произведение векторов
     """
+    if type(v) != list:
+        raise TypeError("v should be a list, not " + str(type(v)) + ".")
+    if type(w) != list:
+        raise TypeError("w should be a list, not " + str(type(w)) + ".")
+    if len(v) != len(w):
+        raise ValueError("vectors should be the same length "
+"(v: " + str(len(v)) + ", w: " + str(len(w)) + ").")
+    if len(v) == 0 or len(w) == 0:
+        raise ValueError("vectors should be non-empty.")
+    if type(v[0]) != int and type(v[0]) != float:
+        raise TypeError("v should contain numbers, "
+"not " + str(type(v[0])) + ".")
+    if type(w[0]) != int and type(w[0]) != float:
+        raise TypeError("w should contain numbers, "
+"not " + str(type(w[0])) + ".")
     return sum(v_i * w_i for v_i, w_i in zip(v, w))
 
 
@@ -293,6 +332,8 @@ def sum_of_squares(v):
     -------
         float: Квадрат модуля вектора
     """
+    if type(v) != list:
+        raise TypeError("v should be a list, not " + str(type(v)) + ".")
     return dot(v, v)
 
 
@@ -1864,7 +1905,7 @@ def clustering(data, k):
 
     Parameters
     ----------
-        data (list of lists): Данные, которые нужно кластеризовать
+        data (list of list): Данные, которые нужно кластеризовать
         k (int): Число кластеров
 
     Returns
@@ -1898,6 +1939,8 @@ class KMeans:
 
     def classify(self, inp):
         """
+        Вывод номера кластера
+
         Parameters
         ----------
             inp (list): Входные данные 
@@ -1906,20 +1949,21 @@ class KMeans:
         -------
             int: Номер кластера
         """
-        return min(range(self, k), flag=lambda i:
-                   squared_distance(inp, self.means[i]))
+        return min(range(self.k), \
+            key = lambda i: squared_distance(inp, self.means[i]))
 
-    def train(self, inps):
+    def train(self, inps, max_iterations=200):
         """
-        Кластеризация данных
+        Подготовка данных
 
         Parameters
         ----------
-            inps (list of lists): Данные, которые нужно кластеризовать
+            inps (list of list): Данные, которые нужно кластеризовать
+            max_iterations (int): Максимальное количество итераций
         """
         self.means = random.sample(inps, self.k)
         assignments = None
-        while True:
+        for i in range(max_iterations):
             new_assignments = map(self.classify, inps)
             if assignments == new_assignments:
                 return
@@ -1928,6 +1972,7 @@ class KMeans:
                 i_points = [p for p, a in zip(inps, assignments) if a == i]
                 if i_points:
                     self.means[i] = vector_mean(i_points)
+        return
 
 
 def squared_errors(inps, k):
