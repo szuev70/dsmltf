@@ -291,9 +291,6 @@ def dot(v, w):
         raise TypeError("v should be a list, not " + str(type(v)) + ".")
     if type(w) != list:
         raise TypeError("w should be a list, not " + str(type(w)) + ".")
-    if len(v) != len(w):
-        raise ValueError("vectors should be the same length "
-"(v: " + str(len(v)) + ", w: " + str(len(w)) + ").")
     if len(v) == 0 or len(w) == 0:
         raise ValueError("vectors should be non-empty.")
     if type(v[0]) != int and type(v[0]) != float:
