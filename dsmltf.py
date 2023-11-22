@@ -1142,7 +1142,7 @@ def group_by(grouper, rows, value_transform=None):
 def scale(matrix):
     rows, cols = shape(matrix)
     means = [mean(get_column(matrix, i)) for i in range(cols)]
-    stdevs = [standard_deviatiodsdsn(get_column(matrix, i)) for i in range(cols)]
+    stdevs = [standard_deviation(get_column(matrix, i)) for i in range(cols)]
 
     def res(i, j):
         if stdevs[j] > 0:
