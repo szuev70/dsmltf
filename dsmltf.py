@@ -1142,7 +1142,7 @@ def group_by(grouper, rows, value_transform=None):
 def scale(matrix):
     rows, cols = shape(matrix)
     means = [mean(get_column(matrix, i)) for i in range(cols)]
-    stdevs = [mean(get_column(matrix, i)) for i in range(cols)]
+    stdevs = [standard_deviation(get_column(matrix, i)) for i in range(cols)]
 
     def res(i, j):
         if stdevs[j] > 0:
@@ -1242,7 +1242,7 @@ def matrix_mul(A, B):
 
 def turn(data, x):
     """
-    Поворачивает данные так, что ось x становится первой координатной осью
+    Поворачивает данные так, что ось x становится первой координатной осью (размерность не снижает)
 
     Parameters
     ----------
@@ -1253,18 +1253,11 @@ def turn(data, x):
     -------
         list of list: Матрица
     """
-    T = []
-    T.append(x)
-    n = len(x)
-    for i in range(1, n):
-        denom = sqrt(1-sum(xi**2 for xi in x[i:]))
-        T.append([])
-        for j, xj in enumerate(x[:i-1]):
-            T[-1].append(xj*x[i]/denom)
-        T[-1].append(-denom)
     new_data = []
     for d in data:
-        new_data.append(matrix_mul(T, d))
+        pr = dot(d,x)
+        new_d = [di - pr*xi for di,xi in zip(d,x)]
+        new_data.append(new_d)
     return new_data
 
 
@@ -1284,15 +1277,12 @@ def principal_components(data, m):
     res_d = [[] for _ in data]
     n = len(data[0])
     components = []
-    projections = []
     for _ in range(m):
         components.append(the_first_priciple_comp(data))
-        data = turn(data, components[-1])
         for j, dj in enumerate(data):
-            res_d[j].append(dj[0])
-        data = [di[1:] for di in data]
+            res_d[j].append(dot(dj,components[-1]))
+        data = turn(data, components[-1])
     return res_d
-
 
 def split_data(data, prob):
     """
